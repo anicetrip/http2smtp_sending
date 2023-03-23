@@ -1,0 +1,4 @@
+mail_server:
+  hostname: "mail.google.com"
+  port: 587
+pass_header: "X-Postmark-Server-Token"

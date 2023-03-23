@@ -1,0 +1,21 @@
+[package]
+name = "lettre_try"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+path="src/lib.rs"
+[[bin]]
+path = "src/main.rs"
+name = "http2stmp"
+
+[dependencies]
+mail-send = "*"
+tokio= {version="1",features= ["macros","rt-multi-thread"] }
+actix-web="4"
+config = "0.13.3"
+serde= {version="1",features= ["derive"]}
+secrecy= {version="0.8",features= ["serde"] }
+serde-aux="4"
