@@ -26,9 +26,4 @@ pub async fn email_api(request: HttpRequest, content: web::Json<Content>) -> imp
     HttpResponse::Ok().json(web::Json(a))
 }
 
-// This is a reminder if I need to scan what's in the head.
-// let key_list = req_headers.keys();
-// for key in key_list{
-//     let a = key.as_str();
-//     println!("{}:{}",a,req_headers.get(a).unwrap().to_str().unwrap());
-// }
+
