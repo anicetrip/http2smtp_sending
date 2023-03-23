@@ -7,7 +7,7 @@ It will be updated with the time I learning the this part .
 
 API form:
 ```
-curl "http://localhost:8080" \
+curl -i "http://localhost:8080" \
 -X POST \
 -H "Accept: application/json" \
 -H "Content-Type: application/json" \

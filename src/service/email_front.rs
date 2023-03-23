@@ -21,9 +21,9 @@ pub async fn email_api(request: HttpRequest, content: web::Json<Content>) -> imp
         TextBody:content.TextBody,
         HtmlBody:content.HtmlBody,
     };
-    let _a = send_email(email_content).await;
-
-    HttpResponse::Ok().body("Hello world!")
+    let a = send_email(email_content).await;
+    // Ok(web::Json(obj))
+    HttpResponse::Ok().json(web::Json(a))
 }
 
 // This is a reminder if I need to scan what's in the head.

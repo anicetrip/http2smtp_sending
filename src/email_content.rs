@@ -1,3 +1,4 @@
+use chrono::{DateTime, Local};
 use secrecy::Secret;
 ///collect data from restful api
 #[derive(serde::Deserialize,Clone)]
@@ -23,11 +24,11 @@ pub struct EmailContent{
 }
 
 /// Return infos
-#[derive(serde::Deserialize,Clone)]
+#[derive(serde::Deserialize,serde::Serialize,Clone)]
 #[allow(non_snake_case)]
 pub struct EmailReturnInfo{
     pub To:String,
-    pub SubmittedAt:String,
+    pub SubmittedAt:DateTime<Local>,
     pub MessageID:String,
     pub ErrorCode:u16,
     pub Message: String,
