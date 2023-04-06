@@ -1,0 +1,11 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+URL:https://www.eventbrite.co.uk/e/rust-live-asynchronous-rust-tickets-575865518267
+DTSTART:20230411T150000Z
+DTEND:20230411T160000Z
+SUMMARY:Rust Live: Asynchronous Rust
+DESCRIPTION:For details, go here:\nhttps://www.eventbrite.co.uk/e/rust-live-asynchronous-rust-tickets-575865518267\n\nTo access the online event page, go here:\nhttps://www.eventbrite.co.uk/x/rust-live-asynchronous-rust-tickets-575865518267
+LOCATION:
+END:VEVENT
+END:VCALENDAR

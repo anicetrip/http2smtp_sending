@@ -1,11 +1,11 @@
 use serde_aux::prelude::deserialize_number_from_string;
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize,Debug)]
 pub struct Settings {
     pub mail_server: MailServer,
     pub pass_header: String,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize,Debug)]
 pub struct MailServer {
     pub hostname: String,
     #[serde(deserialize_with = "deserialize_number_from_string")]
