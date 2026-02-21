@@ -3,8 +3,10 @@ use tracing::{info, instrument};
 
 use crate::{
     configuration::Settings,
-    email_content::{Content, EmailContent, EmailReturnInfo},
-    service::{EmailProvider, auth::extract_api_key, errors::EmailError, smtp_provider::SmtpProvider},
+    email::{Content, EmailContent, EmailReturnInfo},
+    service::{
+        auth::extract_api_key, errors::EmailError, smtp_provider::SmtpProvider, EmailProvider,
+    },
 };
 
 #[post("/")]
@@ -25,11 +27,10 @@ pub async fn email_api(
 
     let email: EmailContent = (content.into_inner(), api_key).into();
 
-    // ⭐ 创建 provider
     let provider = SmtpProvider::new(settings.get_ref());
 
-    // ⭐ 调用 trait 方法
     let result = provider.send(email, &request_id).await?;
 
     Ok(web::Json(result))
 }
+    

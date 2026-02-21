@@ -1,4 +1,3 @@
-mod message;
 mod message_id;
 pub mod service;
 mod smtp;

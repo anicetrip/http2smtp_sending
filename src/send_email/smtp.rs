@@ -1,7 +1,7 @@
-use crate::email_content::EmailContent;
+use crate::email::EmailContent;
 use mail_send::SmtpClientBuilder;
 use secrecy::ExposeSecret;
-use tracing::{debug, instrument};
+use tracing::{debug, instrument, trace};
 
 #[instrument(
     name = "smtp_transport",
@@ -18,7 +18,6 @@ pub async fn send_via_smtp(
     email: &EmailContent,
     message: mail_send::mail_builder::MessageBuilder<'_>,
 ) -> Result<(), String> {
-
     debug!("establishing SMTP connection (TLS negotiation)");
 
     let credential = (email.From.as_str(), email.password.expose_secret());
@@ -34,17 +33,14 @@ pub async fn send_via_smtp(
             e.to_string()
         })?;
 
-    debug!("SMTP authentication successful");
+    trace!("SMTP authentication successful");
 
     debug!("starting SMTP transaction");
 
-    client
-        .send(message)
-        .await
-        .map_err(|e| {
-            debug!(error = %e, "SMTP transaction failed");
-            e.to_string()
-        })?;
+    client.send(message).await.map_err(|e| {
+        debug!(error = %e, "SMTP transaction failed");
+        e.to_string()
+    })?;
 
     debug!("SMTP transaction completed successfully");
 

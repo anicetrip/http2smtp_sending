@@ -19,8 +19,15 @@ impl RootSpanBuilder for CustomRootSpanBuilder {
             request_id = %request_id,
             method = %request.method(),
             path = %request.path(),
-            client_ip = ?request.connection_info().realip_remote_addr(),
-            user_agent = ?request.headers().get("user-agent"),
+            client_ip = %request
+                .connection_info()
+                .realip_remote_addr()
+                .unwrap_or("unknown"),
+            user_agent = %request
+                .headers()
+                .get("user-agent")
+                .and_then(|v| v.to_str().ok())
+                .unwrap_or("unknown"),
 
             status_code = field::Empty,
             error = field::Empty,

@@ -2,7 +2,7 @@ use tracing::{error, info, instrument};
 
 use crate::{
     configuration::Settings,
-    email_content::{EmailContent, EmailReturnInfo},
+    email::{EmailContent, EmailReturnInfo},
     send_email::service::send_email,
     service::{email_provider::EmailProvider, errors::EmailError},
 };
@@ -35,7 +35,7 @@ impl<'a> EmailProvider for SmtpProvider<'a> {
         info!("starting SMTP send");
 
         // ⭐ 传入 request_id
-        let result = send_email(email, &self.settings, request_id).await;
+        let result = send_email(email, self.settings, request_id).await;
 
         if result.ErrorCode != 0 {
             error!(

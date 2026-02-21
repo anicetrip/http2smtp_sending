@@ -1,5 +1,5 @@
 use crate::{
-    email_content::{EmailContent, EmailReturnInfo},
+    email::{EmailContent, EmailReturnInfo},
     service::errors::EmailError,
 };
 #[allow(async_fn_in_trait)]

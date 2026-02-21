@@ -1,11 +1,11 @@
 use crate::{
     configuration::Settings,
-    email_content::{EmailContent, EmailReturnInfo},
+    email::{EmailContent, EmailReturnInfo},
 };
 use std::time::Instant;
 use tracing::{debug, error, info, instrument};
 
-use super::{message::build_message, message_id::generate_message_id, smtp::send_via_smtp};
+use super::{message_id::generate_message_id, smtp::send_via_smtp};
 
 #[instrument(
     name = "smtp_send_email",
@@ -15,21 +15,19 @@ use super::{message::build_message, message_id::generate_message_id, smtp::send_
         subject = %email.Subject
     )
 )]
-pub async fn send_email(
+pub async fn send_email<'a>(
     email: EmailContent,
-    settings: &Settings,
-    request_id: &str,
+    settings: &'a Settings,
+    request_id: &'a str,
 ) -> EmailReturnInfo {
     let start_time = Instant::now();
 
-    // ⭐ 使用配置中的域名
     let domain = &settings.mail_server.hostname;
 
-    let (message_id, timestamp) = generate_message_id(&request_id, domain);
+    let (message_id, timestamp) = generate_message_id(request_id, domain);
 
     info!(
         message_id = %message_id,
-        request_id = %request_id,
         "generated message id"
     );
 
@@ -43,7 +41,7 @@ pub async fn send_email(
 
     debug!("building MIME message");
 
-    let message = build_message(&email, &message_id);
+    let message = email.to_message(&message_id);
 
     info!(
         smtp_host = %settings.mail_server.hostname,
@@ -60,24 +58,21 @@ pub async fn send_email(
     .await
     {
         Ok(_) => {
-            let elapsed = start_time.elapsed();
+            let duration_ms = start_time.elapsed().as_millis();
 
             info!(
                 message_id = %message_id,
-                request_id = %request_id,
-                duration_ms = elapsed.as_millis(),
+                duration_ms,
                 "email sent successfully"
             );
 
             result.Message = "Successful sending".into();
         }
         Err(err) => {
-            let elapsed = start_time.elapsed();
-
+            let duration_ms = start_time.elapsed().as_millis();
             error!(
                 message_id = %message_id,
-                request_id = %request_id,
-                duration_ms = elapsed.as_millis(),
+                duration_ms,
                 error = %err,
                 "smtp send failed"
             );
@@ -88,4 +83,45 @@ pub async fn send_email(
     }
 
     result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::configuration::{MailServer, Settings};
+    use secrecy::SecretString;
+
+    fn test_settings() -> Settings {
+        Settings {
+            pass_header: "X-API-Key".into(),
+            mail_server: MailServer {
+                hostname: "localhost".into(),
+                port: 25,
+            },
+        }
+    }
+
+    fn test_email() -> EmailContent {
+        EmailContent {
+            From: "sender@test.com".into(),
+            password: SecretString::new("pwd".into()),
+            To: "receiver@test.com".into(),
+            Subject: "Hello".into(),
+            TextBody: "text".into(),
+            HtmlBody: "<b>html</b>".into(),
+        }
+    }
+
+    #[tokio::test]
+    async fn send_email_returns_result_structure() {
+        let settings = test_settings();
+        let email = test_email();
+
+        // ⚠️ 使用不存在端口避免真实连接
+        let result = send_email(email, &settings, "req-123").await;
+
+        assert_eq!(result.To, "receiver@test.com");
+        assert!(result.MessageID.contains("req-123"));
+        assert!(!result.SubmittedAt.to_string().is_empty());
+    }
 }
