@@ -1,2 +1,5 @@
+mod auth;
 pub mod email_front;
-pub mod email_send;
+mod email_mapper;
+mod email_service;
+pub mod errors;

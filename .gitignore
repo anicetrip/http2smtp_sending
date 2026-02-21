@@ -1,3 +1,4 @@
 /target
 configuration/base.yaml
 Cargo.lock
+configuration/local.yaml
