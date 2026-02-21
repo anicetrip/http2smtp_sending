@@ -1,7 +1,7 @@
 use crate::email_content::EmailContent;
 use mail_send::mail_builder::MessageBuilder;
 
-pub fn build_message(email: &EmailContent, message_id: String) -> MessageBuilder<'_> {
+pub fn build_message<'a>(email: &'a EmailContent, message_id: &'a str) -> MessageBuilder<'a> {
     let from_data = (
         email.From.split('@').next().unwrap_or(""),
         email.From.as_str(),

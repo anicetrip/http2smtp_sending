@@ -1,13 +1,12 @@
 use chrono::{DateTime, Local};
-use sysinfo::System;
-use uuid::Uuid;
 
-pub fn generate_message_id() -> (String, DateTime<Local>) {
-    let sysname = System::host_name().unwrap_or_default();
-    let id = Uuid::new_v4();
+pub fn generate_message_id(
+    request_id: &str,
+    domain: &str,
+) -> (String, DateTime<Local>) {
     let now = Local::now();
 
-    let message_id = format!("{}.{}@{}", id, now.timestamp(), sysname);
+    let message_id = format!("{}.{}@{}", request_id, now.timestamp(), domain);
 
     (message_id, now)
 }

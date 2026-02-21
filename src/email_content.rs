@@ -24,6 +24,20 @@ pub struct EmailContent {
     pub HtmlBody: String,
 }
 
+impl From<(Content, String)> for EmailContent {
+    fn from((content, api_key): (Content, String)) -> Self {
+        let password = SecretString::new(api_key.into());
+        Self {
+            From: content.From,
+            password,
+            To: content.To,
+            Subject: content.Subject,
+            TextBody: content.TextBody,
+            HtmlBody: content.HtmlBody,
+        }
+    }
+}
+
 /// Return infos
 #[derive(serde::Serialize, Clone)]
 #[allow(non_snake_case)]

@@ -1,6 +1,6 @@
 use actix_web::body::MessageBody;
 use actix_web::dev::{ServiceRequest, ServiceResponse};
-use actix_web::Error;
+use actix_web::{Error, HttpMessage};
 use tracing::{field, info_span, Span};
 use tracing_actix_web::RootSpanBuilder;
 use uuid::Uuid;
@@ -9,7 +9,10 @@ pub struct CustomRootSpanBuilder;
 
 impl RootSpanBuilder for CustomRootSpanBuilder {
     fn on_request_start(request: &ServiceRequest) -> Span {
-        let request_id = Uuid::new_v4();
+        let request_id = Uuid::new_v4().to_string();
+
+        // ⭐⭐ 关键：保存到 request extensions ⭐⭐
+        request.extensions_mut().insert(request_id.clone());
 
         info_span!(
             "http_request",
