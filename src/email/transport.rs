@@ -1,5 +1,5 @@
-use mail_send::mail_builder::MessageBuilder;
 use crate::email::domain::EmailContent;
+use mail_send::mail_builder::MessageBuilder;
 
 impl EmailContent {
     pub fn to_message<'a>(&'a self, message_id: &'a str) -> MessageBuilder<'a> {
@@ -24,7 +24,6 @@ impl EmailContent {
             .message_id(message_id)
     }
 }
-
 
 #[cfg(test)]
 mod tests {

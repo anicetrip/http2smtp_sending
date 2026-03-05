@@ -33,4 +33,3 @@ pub async fn email_api(
 
     Ok(web::Json(result))
 }
-    

@@ -8,7 +8,6 @@ pub fn generate_message_id(request_id: &str, domain: &str) -> (String, DateTime<
     (message_id, now)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

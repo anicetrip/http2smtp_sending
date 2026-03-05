@@ -11,8 +11,6 @@ pub struct EmailContent {
     pub HtmlBody: String,
 }
 
-
-
 use super::api_models::Content;
 
 impl From<(Content, String)> for EmailContent {
@@ -27,8 +25,6 @@ impl From<(Content, String)> for EmailContent {
         }
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

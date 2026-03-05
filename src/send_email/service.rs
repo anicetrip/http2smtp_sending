@@ -98,6 +98,7 @@ mod tests {
                 hostname: "localhost".into(),
                 port: 25,
             },
+            port: 3300,
         }
     }
 
