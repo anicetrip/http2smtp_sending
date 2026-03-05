@@ -9,7 +9,7 @@ use crate::{
     },
 };
 
-#[post("/")]
+#[post("/email")]
 #[instrument(skip(request, content, settings))]
 pub async fn email_api(
     request: HttpRequest,
