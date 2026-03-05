@@ -129,7 +129,60 @@ src
 ├── setup.rs
 └── main.rs
 ```
+---
 
+# Running as a systemd Service
+
+You can run the mail API as a background service using **systemd**.
+
+Build and rename as `lettre_try`.
+
+Example service file:
+
+```ini
+[Unit]
+Description=Mail API Service
+After=network.target
+
+[Service]
+Type=simple
+
+# Working directory
+WorkingDirectory=/opt/mail-api
+
+# Binary path
+ExecStart=/opt/mail-api/lettre_try
+
+# Automatically restart if the process crashes
+Restart=always
+RestartSec=5
+
+# Log output to journald
+StandardOutput=journal
+StandardError=journal
+
+# Optional environment variables
+Environment=RUST_LOG=info
+
+[Install]
+WantedBy=multi-user.target
+```
+Save this file as:
+`/etc/systemd/system/mail-api.service`
+
+Then run:
+```
+sudo systemctl daemon-reload
+sudo systemctl enable mail-api
+sudo systemctl start mail-api
+```
+
+Check the service status:
+
+```
+sudo systemctl status mail-api
+journalctl -u mail-api -f
+```
 ---
 
 # Useful Notes
