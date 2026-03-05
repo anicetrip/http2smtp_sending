@@ -125,4 +125,15 @@ mod tests {
         assert!(result.MessageID.contains("req-123"));
         assert!(!result.SubmittedAt.to_string().is_empty());
     }
+
+    #[tokio::test]
+    async fn send_email_sets_error_on_failure() {
+        let settings = test_settings();
+        let email = test_email();
+
+        let result = send_email(email, &settings, "req-123").await;
+
+        assert_eq!(result.ErrorCode, 1);
+        assert!(!result.Message.is_empty());
+    }
 }

@@ -40,3 +40,10 @@ for key in key_list{
 ```
 
 
+## Test Coverage
+
+Current test coverage (measured with `cargo llvm-cov`):
+
+- Lines: **84.36%**
+- Regions: **83.59%**
+- Functions: **81.82%**

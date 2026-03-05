@@ -1,5 +1,6 @@
-use lettre_try::{configuration, setup::http_front, telemetry::init::init_tracing};
-use tracing::{error, info};
+use lettre_try::configuration::load_configuration;
+use lettre_try::{setup::http_front, telemetry::init::init_tracing};
+use tracing::info;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
@@ -7,18 +8,7 @@ async fn main() -> std::io::Result<()> {
 
     info!("start to work");
 
-    // ⭐ 加载配置
-    let config = match configuration::get_configuration() {
-        Ok(c) => {
-            info!(?c, "configuration loaded");
-            c
-        }
-        Err(e) => {
-            error!(error = ?e, "failed to load configuration");
-            return Err(std::io::Error::other(e));
-        }
-    };
+    let config = load_configuration()?;
 
-    // ⭐ 把配置传入 http server
     http_front(config).await
 }

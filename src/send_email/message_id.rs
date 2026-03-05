@@ -19,8 +19,28 @@ mod tests {
 
         let (id, _) = generate_message_id(request_id, domain);
 
-        assert!(id.contains(request_id));
-        assert!(id.contains(domain));
-        assert!(id.contains("@"));
+        let parts: Vec<&str> = id.split('@').collect();
+        assert_eq!(parts.len(), 2);
+        let left = parts[0];
+        let right = parts[1];
+
+        assert_eq!(right, domain);
+
+        let left_parts: Vec<&str> = left.split('.').collect();
+        assert_eq!(left_parts[0], request_id);
+
+        // timestamp 应该是数字
+        assert!(left_parts[1].parse::<i64>().is_ok());
+    }
+    #[test]
+    fn returns_current_timestamp() {
+        let (id, time) = generate_message_id("req", "domain");
+
+        assert!(!id.is_empty());
+
+        let now = chrono::Local::now();
+
+        // 时间差应该非常小
+        assert!((now.timestamp() - time.timestamp()).abs() < 2);
     }
 }

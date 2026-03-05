@@ -17,3 +17,4 @@ pub async fn http_front(settings: Settings) -> std::io::Result<()> {
     .run()
     .await
 }
+

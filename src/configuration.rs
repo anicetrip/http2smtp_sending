@@ -1,4 +1,6 @@
 use serde_aux::prelude::deserialize_number_from_string;
+use tracing::{error, info};
+
 #[derive(serde::Deserialize, Debug)]
 pub struct Settings {
     pub mail_server: MailServer,
@@ -66,5 +68,68 @@ Use either `local` or `production`.",
                 other
             )),
         }
+    }
+}
+
+pub fn load_configuration() -> std::io::Result<Settings> {
+    match get_configuration() {
+        Ok(c) => {
+            info!(?c, "configuration loaded");
+            Ok(c)
+        }
+        Err(e) => {
+            error!(error = ?e, "failed to load configuration");
+            Err(std::io::Error::other(e))
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn environment_parses_local() {
+        let env: Environment = "local".to_string().try_into().unwrap();
+        assert_eq!(env.as_str(), "local");
+    }
+
+    #[test]
+    fn environment_parses_production() {
+        let env: Environment = "production".to_string().try_into().unwrap();
+        assert_eq!(env.as_str(), "production");
+    }
+
+    #[test]
+    fn environment_rejects_invalid_value() {
+        let result: Result<Environment, _> = "invalid".to_string().try_into();
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn load_configuration_returns_settings() {
+        let result = load_configuration();
+
+        assert!(result.is_ok());
+
+        let settings = result.unwrap();
+
+        assert!(!settings.mail_server.hostname.is_empty());
+        assert!(settings.mail_server.port > 0);
+        assert!(settings.port > 0);
+    }
+
+    #[test]
+    fn get_configuration_reads_yaml() {
+        std::env::set_var("APP_ENVIRONMENT", "local");
+
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        std::env::set_current_dir(root).unwrap();
+
+        let config = get_configuration();
+
+        println!("config result: {:?}", config);
+
+        assert!(config.is_ok());
     }
 }

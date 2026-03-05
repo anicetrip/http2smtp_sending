@@ -30,17 +30,21 @@ impl From<(Content, String)> for EmailContent {
 mod tests {
     use super::*;
     use crate::email::api_models::Content;
+    use secrecy::ExposeSecret;
 
-    #[test]
-    fn convert_content_into_email_content() {
-        let content = Content {
+    fn build_content() -> Content {
+        Content {
             From: "sender@test.com".into(),
             To: "receiver@test.com".into(),
             Subject: "Hello".into(),
             TextBody: "text".into(),
             HtmlBody: "<b>html</b>".into(),
-        };
+        }
+    }
 
+    #[test]
+    fn convert_content_into_email_content() {
+        let content = build_content();
         let api_key = "secret_key".to_string();
 
         let email: EmailContent = (content.clone(), api_key.clone()).into();
@@ -50,5 +54,33 @@ mod tests {
         assert_eq!(email.Subject, content.Subject);
         assert_eq!(email.TextBody, content.TextBody);
         assert_eq!(email.HtmlBody, content.HtmlBody);
+        assert_eq!(email.password.expose_secret(), &api_key);
+    }
+
+    #[test]
+    fn conversion_keeps_all_fields() {
+        let content = Content {
+            From: "a@a.com".into(),
+            To: "b@b.com".into(),
+            Subject: "Test".into(),
+            TextBody: "plain".into(),
+            HtmlBody: "<p>plain</p>".into(),
+        };
+
+        let api_key = "another_key".to_string();
+
+        let email: EmailContent = (content.clone(), api_key.clone()).into();
+
+        assert_eq!(email.From, "a@a.com");
+        assert_eq!(email.To, "b@b.com");
+        assert_eq!(email.password.expose_secret(), "another_key");
+    }
+
+    #[test]
+    fn conversion_does_not_panic() {
+        let content = build_content();
+        let api_key = "secret".to_string();
+
+        let _email: EmailContent = (content, api_key).into();
     }
 }
