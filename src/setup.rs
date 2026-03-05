@@ -6,14 +6,14 @@ use tracing_actix_web::TracingLogger;
 
 pub async fn http_front(settings: Settings) -> std::io::Result<()> {
     let settings = Data::new(settings);
-
+    let port = settings.port;
     HttpServer::new(move || {
         App::new()
             .app_data(settings.clone())
             .wrap(TracingLogger::<CustomRootSpanBuilder>::new())
             .service(email_api)
     })
-    .bind(("0.0.0.0", 8080))?
+    .bind(("0.0.0.0", port))?
     .run()
     .await
 }

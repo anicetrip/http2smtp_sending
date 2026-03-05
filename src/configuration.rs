@@ -3,6 +3,7 @@ use serde_aux::prelude::deserialize_number_from_string;
 pub struct Settings {
     pub mail_server: MailServer,
     pub pass_header: String,
+    pub port: u16,
 }
 
 #[derive(serde::Deserialize, Debug)]
